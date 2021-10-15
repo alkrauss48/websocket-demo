@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "8080:80"
+    # volumes:
+    #   - ./public:/var/www/html
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    ports:
+      - "7070:7070"
+    # volumes:
+    #   - .:/app

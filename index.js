@@ -1,10 +1,7 @@
-const express = require('express');
-const http = require('http');
 const sanitizeHtml = require('sanitize-html');
 
-const app = express();
-const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+const { Server } = require('socket.io');
+const io = new Server({ /* options */ });
 
 // This will allow for 15 messages per 8 seconds
 const RATE = 15;
@@ -33,9 +30,6 @@ const validateRateLimit = () => {
   return true;
 }
 
-// Routing
-app.use(express.static(__dirname + '/public'));
-
 io.on('connection', (socket) => {
   socket.on('message', (data) => {
     if (!validateRateLimit()) {
@@ -49,4 +43,4 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(7070);
+io.listen(7070);

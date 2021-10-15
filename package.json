@@ -12,11 +12,8 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "express": "^4.17.1",
-    "socket.io": "^4.3.0"
-  },
   "dependencies": {
-    "sanitize-html": "^2.5.2"
+    "sanitize-html": "^2.5.2",
+    "socket.io": "^4.3.0"
   }
 }
