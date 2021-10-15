@@ -1,40 +1,51 @@
-var http = require('http');
-var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
-var sanitizeHtml = require('sanitize-html');
+const express = require('express');
+const http = require('http');
+const sanitizeHtml = require('sanitize-html');
 
-var rate = 15;
-var per  = 8;
-var allowance = rate;
-var last_check = new Date();
+const app = express();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+
+// This will allow for 15 messages per 8 seconds
+const RATE = 15;
+const PER = 8;
+
+const validateRateLimit = () => {
+  let lastCheck = new Date();
+  const current = new Date();
+  const timePassed = Math.floor((current - lastCheck) / 1000);
+
+  let allowance = RATE;
+
+  lastCheck = current;
+
+  allowance += timePassed * (RATE / PER);
+  if (allowance > RATE){
+    allowance = RATE;
+  }
+
+  if (allowance < 1.0){
+    return false
+  }
+
+  allowance--
+
+  return true;
+}
 
 // Routing
 app.use(express.static(__dirname + '/public'));
 
-var io = require('socket.io')(server);
-io.on('connection', function(socket){
-
-  socket.on('message', function (data) {
-    // Implement rate limiting
-    var current = new Date();
-    var time_passed = Math.floor((current- last_check) / 1000);
-    last_check = current;
-    allowance += time_passed * (rate / per);
-    if (allowance > rate){
-      allowance = rate; // throttle
+io.on('connection', (socket) => {
+  socket.on('message', (data) => {
+    if (!validateRateLimit()) {
+      return;
     }
 
-    if(!(allowance < 1.0)){
-      console.log(data);
-
-      // we tell the client to execute 'message'
-      socket.broadcast.emit('message', {
-        message: sanitizeHtml(data)
-      });
-      allowance -= 1.0;
-    }
-
+    // we tell the client to execute 'message'
+    socket.broadcast.emit('message', {
+      message: sanitizeHtml(data)
+    });
   });
 });
 
