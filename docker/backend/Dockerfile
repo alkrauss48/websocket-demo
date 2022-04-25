@@ -9,6 +9,7 @@ COPY package-lock.json package-lock.json
 RUN npm install --production
 
 COPY public public
-COPY index.js index.js
+COPY src src
+copy index.js index.js
 
-CMD [ "node", "index.js" ]
+CMD [ "npm", "start" ]
