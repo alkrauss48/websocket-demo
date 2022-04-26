@@ -1,18 +1,26 @@
 name: ci
 
-on:
-  push:
-    branches:
-      - 'master'
+on: push
 
 jobs:
-  build-nginx:
+  build-frontend:
     runs-on: ubuntu-latest
-    name: Build Frontend Docker Image
+    name: Build Frontend
     steps:
       -
         name: Checkout
         uses: actions/checkout@v2
+      -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: alkrauss48/websockets-frontend
+          tags: |
+            type=ref,prefix=dev-,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}
+            type=semver,pattern={{major}}.{{minor}}
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -30,15 +38,27 @@ jobs:
           context: .
           file: docker/frontend/Dockerfile
           push: true
-          tags: alkrauss48/websockets-frontend:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
-  build-php:
+  build-backend:
     runs-on: ubuntu-latest
-    name: Build Backend Docker Image
+    name: Build Backend
     steps:
       -
         name: Checkout
         uses: actions/checkout@v2
+      -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: alkrauss48/websockets-backend
+          tags: |
+            type=ref,prefix=dev-,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}
+            type=semver,pattern={{major}}.{{minor}}
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
@@ -56,4 +76,5 @@ jobs:
           context: .
           file: docker/backend/Dockerfile
           push: true
-          tags: alkrauss48/websockets-backend:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
