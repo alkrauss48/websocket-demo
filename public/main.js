@@ -1,15 +1,18 @@
-(function () {
-  const socket = io()
+// eslint-disable-next-line no-undef
+const socket = io()
 
-  $('.submit-message').submit(function (event) {
-    event.preventDefault()
+const messagesElem = document.getElementById('messages')
+const messageInput = document.getElementById('message')
 
-    $('.messages').append('<tr><td>' + $('#my-message').val() + '</td></tr>')
-    socket.emit('message', $('#my-message').val())
-    $('#my-message').val('')
-  })
+// eslint-disable-next-line no-unused-vars
+function onSubmit (event) {
+  event.preventDefault()
 
-  socket.on('message', function (data) {
-    $('.messages').append('<tr><td>' + data.message + '</td></tr>')
-  })
-})()
+  messagesElem.innerHTML += '<tr><td>' + messageInput.value + '</td></tr>'
+  socket.emit('message', messageInput.value)
+  messageInput.value = ''
+}
+
+socket.on('message', function (data) {
+  messagesElem.innerHTML += '<tr><td>' + data.message + '</td></tr>'
+})
