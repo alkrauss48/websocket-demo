@@ -4,7 +4,9 @@
   "description": "A small little node project to show the power of WebSockets with socket.io.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "npx standard",
+    "lint:fix": "npx standard --fix"
   },
   "repository": {
     "type": "git",

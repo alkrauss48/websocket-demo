@@ -8,3 +8,12 @@ evildoers out there.
 ```shell
 docker-compose up # navigate to localhost:8080
 ```
+
+## Linting
+```shell
+# To run the linter
+npm run lint
+
+# To run the linter and attempt to fix any mistakes
+npm run lint:fix
+```
