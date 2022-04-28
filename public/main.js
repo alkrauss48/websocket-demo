@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-undef
 const socket = io()
 
 const messagesElem = document.getElementById('messages')
